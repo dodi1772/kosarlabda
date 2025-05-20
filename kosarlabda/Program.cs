@@ -6,153 +6,147 @@ namespace kosarlabda
 	{
 		static void Main(string[] args)
 		{
-			//fájl beolvasása stringtömbbe
-			string[] lines = System.IO.File.ReadAllLines("C:/Users/gluck/source/repos/infojegyzethu_acb_kosarlabdaliga/eredmenyek.csv");
+			string[] sorok = System.IO.File.ReadAllLines("C:/Users/Diák/source/repos/kosarlabda/eredmenyek.csv");
 
-			//üres objektumlista létrehozása
-			List<Match> matchList = new List<Match>();
+			List<Match> MatchLista = new List<Match>();
 
-			for (int i = 1; i < lines.Length; i++)
+			for (int i = 1; i < sorok.Length; i++)
 			{
-				//példány legenerálása a stringtömb sorából
-				Match matchInstance = new Match(lines[i]);
+				Match ujMatch = new Match(sorok[i]);
 
-				//példány hozzáadása listához
-				matchList.Add(matchInstance);
+				MatchLista.Add(ujMatch);
 			}
 
-			Console.WriteLine("3. feladat: a Real Madrid hány mérközést játszott hazai, illetve idegen csapatként?");
-			Console.WriteLine(rmHanyMerkozesHazai(matchList));
-			Console.WriteLine(rmHanyMerkozesIdegen(matchList));
+			Console.WriteLine("3. feladat: Hány mérkőzést játszott a Real Madrid hazai, illetve idegen csapatként?");
+			Console.WriteLine(RealMadridHazaiMatchekSzama(MatchLista));
+			Console.WriteLine(RealMadridIdegenMatchekSzama(MatchLista));
 
-			Console.WriteLine("4. feladat: Volt-e döntetlen mérközés?");
-			Console.WriteLine(voltEDontetlen(matchList));
+			Console.WriteLine("4. feladat: Volt-e döntetlen mérkőzés?");
+			Console.WriteLine(VoltDontetlen(MatchLista));
 
-			Console.WriteLine("5. feladat: A barcelonai csapatnak mi a pontos neve?");
-			Console.WriteLine(barcelonaiCsapatPontosneve(matchList));
+			Console.WriteLine("5. feladat: Mi a pontos neve a barcelonai csapatnak?");
+			Console.WriteLine(BarcelonaCsapatNeve(MatchLista));
 
-			Console.WriteLine("6. feladat: 2004 nov 21-én mely csapatok játszottak mérközéseket, és milyen eredmény született?");
-			adottDatumonMelyCsapatokEsEredmeny(matchList, "2004-10-03");
+			Console.WriteLine("6. feladat: 2004-10-03-án mely csapatok játszottak és milyen eredmény született?");
+			MatchekAdottNapon(MatchLista, "2004-10-03");
 
-			Console.WriteLine("7. feladat: melyek azok a stadionok, amelyek 20-nál több alkalommal voltak kosárlabdamérkőzések helyszínei? A stadionok neve mögött jelenjen meg a mérközések száma is!");
-			stadionok(matchList);
+			Console.WriteLine("7. feladat: Mely stadionokban rendeztek 20-nál több mérkőzést? A stadion neve mellett jelenjen meg a mérkőzések száma is!");
+			Stadionok20FelettiMatchsel(MatchLista);
 
 			Console.ReadKey();
 		}
 
-		private static void stadionok(List<Match> matchList)
+		private static void Stadionok20FelettiMatchsel(List<Match> MatchLista)
 		{
-			List<string> listOfVenues = new List<string>();
-			List<string> distinctListOfVenues = new List<string>();
+			List<string> stadionok = new List<string>();
+			List<string> kulonbozoStadionok = new List<string>();
 
-			foreach (var item in matchList)
+			foreach (var Match in MatchLista)
 			{
-				listOfVenues.Add(item.Helyszin);
+				stadionok.Add(Match.Helyszin);
 			}
-			distinctListOfVenues = listOfVenues.Distinct().ToList();
+			kulonbozoStadionok = stadionok.Distinct().ToList();
 
-
-
-			foreach (var venue in distinctListOfVenues)
+			foreach (var stadion in kulonbozoStadionok)
 			{
-				int y = 0;
+				int MatchSzamlalo = 0;
 
-				for (int i = 0; i < matchList.Count; i++)
+				for (int i = 0; i < MatchLista.Count; i++)
 				{
-					if (matchList[i].Helyszin == venue)
+					if (MatchLista[i].Helyszin == stadion)
 					{
-						y++;
+						MatchSzamlalo++;
 					}
 				}
 
-				if (y > 20)
+				if (MatchSzamlalo > 20)
 				{
-					Console.WriteLine(venue + " " + y);
+					Console.WriteLine(stadion + " " + MatchSzamlalo);
 				}
 			}
 		}
 
-		private static void adottDatumonMelyCsapatokEsEredmeny(List<Match> matchList, string date)
+		private static void MatchekAdottNapon(List<Match> MatchLista, string datum)
 		{
-			List<Match> filteredMatchList = new List<Match>();
-			foreach (var item in matchList)
+			List<Match> adottNapiMatchek = new List<Match>();
+			foreach (var Match in MatchLista)
 			{
-				if (item.Idopont == date)
+				if (Match.Idopont == datum)
 				{
-					filteredMatchList.Add(item);
+					adottNapiMatchek.Add(Match);
 				}
 			}
 
-			foreach (var item in filteredMatchList)
+			foreach (var Match in adottNapiMatchek)
 			{
-				Console.WriteLine(item.Hazai + "-" + item.Idegen + " (" + item.Hazai_pont + ":" + item.Idegen_pont + ")");
+				Console.WriteLine(Match.Hazai + "-" + Match.Idegen + " (" + Match.HazaiPont + ":" + Match.IdegenPont + ")");
 			}
 		}
 
-		private static string barcelonaiCsapatPontosneve(List<Match> matchList)
+		private static string BarcelonaCsapatNeve(List<Match> MatchLista)
 		{
-			string barcelonaPontosNeve = "";
+			string barcelonaNev = "";
 
-			foreach (var item in matchList)
+			foreach (var Match in MatchLista)
 			{
-				if (item.Hazai.Contains("Barcelona"))
+				if (Match.Hazai.Contains("Barcelona"))
 				{
-					barcelonaPontosNeve = item.Hazai;
+					barcelonaNev = Match.Hazai;
 					break;
 				}
 			}
-			return barcelonaPontosNeve;
+			return barcelonaNev;
 		}
 
-		private static string voltEDontetlen(List<Match> matchList)
+		private static string VoltDontetlen(List<Match> MatchLista)
 		{
-			string voltEDontetlen = "nem";
-			int dontetlenekSzama = 0;
+			string dontetlenVolt = "nem";
+			int dontetlenDb = 0;
 
-			foreach (var item in matchList)
+			foreach (var Match in MatchLista)
 			{
-				if (item.Hazai_pont == item.Idegen_pont)
+				if (Match.HazaiPont == Match.IdegenPont)
 				{
-					dontetlenekSzama++;
+					dontetlenDb++;
 				}
 			}
 
-			if (dontetlenekSzama > 0)
+			if (dontetlenDb > 0)
 			{
-				voltEDontetlen = "igen";
+				dontetlenVolt = "igen";
 			}
 
-			return $"{voltEDontetlen}";
+			return $"{dontetlenVolt}";
 		}
 
-		private static string rmHanyMerkozesIdegen(List<Match> matchList)
+		private static string RealMadridHazaiMatchekSzama(List<Match> MatchLista)
 		{
-			int rmHanyMerkozesIdegen = 0;
+			int hazaiDb = 0;
 
-			foreach (var item in matchList)
+			foreach (var Match in MatchLista)
 			{
-				if (item.Hazai == "Real Madrid")
+				if (Match.Hazai == "Real Madrid")
 				{
-					rmHanyMerkozesIdegen++;
+					hazaiDb++;
 				}
 			}
 
-			return $"hazai: {rmHanyMerkozesIdegen}";
+			return $"hazai: {hazaiDb}";
 		}
 
-		private static string rmHanyMerkozesHazai(List<Match> matchList)
+		private static string RealMadridIdegenMatchekSzama(List<Match> MatchLista)
 		{
-			int rmHanyMerkozesIdegen = 0;
+			int idegenDb = 0;
 
-			foreach (var item in matchList)
+			foreach (var Match in MatchLista)
 			{
-				if (item.Idegen == "Real Madrid")
+				if (Match.Idegen == "Real Madrid")
 				{
-					rmHanyMerkozesIdegen++;
+					idegenDb++;
 				}
 			}
 
-			return $"idegen: {rmHanyMerkozesIdegen}";
+			return $"idegen: {idegenDb}";
 		}
 	}
 }
